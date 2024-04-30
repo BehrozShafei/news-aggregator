@@ -1,18 +1,20 @@
 import React, { useEffect, useState } from "react";
-import fetchData from "../data";
+import { fetchDataNyTimes, fetchDataNews } from "../data";
+import FeaturedPost from "../component/FeaturedPost";
+import { Grid } from "@mui/material";
 
 export default function NewsPage() {
   const [newsData, setNewsData] = useState(null);
 
   useEffect(() => {
     async function fetchNews() {
-      debugger;
       try {
-        const { data1, data2, data3 } = await fetchData();
 
-        debugger;
+        const { normalizeNytimes } = await fetchDataNyTimes();
+        const { normalize } = await fetchDataNews();
         // Combine and set the data
-        setNewsData([...data1, ...data2, ...data3]);
+        debugger
+        setNewsData([...normalizeNytimes, ...normalize]);
       } catch (error) {
         // Handle error
       }
@@ -26,13 +28,14 @@ export default function NewsPage() {
   return (
     <div>
       test
-      {newsData &&
-        newsData.map((item, index) => (
-          <div key={index}>
-            {/* Render individual news item */}
-            <p>{item.title}</p>
-          </div>
-        ))}
+      <main>
+        <Grid container spacing={4}>
+          {newsData &&
+            newsData.map((post) => (
+              <FeaturedPost key={post.title} post={post} />
+            ))}
+        </Grid>
+      </main>
     </div>
   );
 }
