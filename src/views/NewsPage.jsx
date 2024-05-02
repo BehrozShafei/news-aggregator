@@ -1,41 +1,65 @@
 import React, { useEffect, useState } from "react";
-import { fetchDataNyTimes, fetchDataNews } from "../data";
 import FeaturedPost from "../component/FeaturedPost";
 import { Grid } from "@mui/material";
+import { Stack } from "@mui/system";
+import { Pagination } from "@mui/material";
 
-export default function NewsPage() {
-  const [newsData, setNewsData] = useState(null);
+import {
+  useFetchNewsQuery,
+  useFetchNyTimesQuery,
+} from "./../services/apiSlice";
 
-  useEffect(() => {
-    async function fetchNews() {
-      try {
+function NewsPage() {
+  const [page, setPage] = useState(0);
+  // Fetch data from all three endpoints
+  const {
+    data: newsData = [],
+    isLoading: isLoadingNews,
+    isError: isErrorNews,
+  } = useFetchNewsQuery(page);
+  const {
+    data: nyTimesData = [],
+    isLoading: isLoadingNyTimes,
+    isError: isErrorNyTimes,
+  } = useFetchNyTimesQuery(page);
+  const handleChange = (event, value) => {
+    setPage(value);
+  };
+  //   const {
+  //     data: guardianData,
+  //     isLoading: isLoadingGuardian,
+  //     isError: isErrorGuardian,
+  //   } = useFetchGuardianQuey();
 
-        const { normalizeNytimes } = await fetchDataNyTimes();
-        const { normalize } = await fetchDataNews();
-        // Combine and set the data
-        debugger
-        setNewsData([...normalizeNytimes, ...normalize]);
-      } catch (error) {
-        // Handle error
-      }
-    }
+  // Combine data from all endpoints
 
-    fetchNews();
-  }, []);
+  const allData = [...newsData, ...nyTimesData];
 
-  // Render newsData in your component
-  console.log("newsData", newsData);
+  // Handle loading and error states
+  if (isLoadingNews || isLoadingNyTimes) {
+    return <div>Loading...</div>;
+  }
+
+  if (isErrorNews || isErrorNyTimes) {
+    return <div>Error fetching data...</div>;
+  }
+  console.log("allData", allData);
+  // Render the combined data
   return (
     <div>
-      test
       <main>
         <Grid container spacing={4}>
-          {newsData &&
-            newsData.map((post) => (
-              <FeaturedPost key={post.title} post={post} />
+          {allData &&
+            allData.map((post) => (
+              <FeaturedPost key={Math.random()} post={post} />
             ))}
         </Grid>
+        <Stack spacing={2}>
+          <Pagination count={10} color="primary" onChange={handleChange} />
+        </Stack>
       </main>
     </div>
   );
 }
+
+export default NewsPage;
