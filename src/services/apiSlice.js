@@ -11,8 +11,23 @@ const api = createApi({
   baseQuery: fetchBaseQuery({ baseUrl: API_BASE_URLS.newsApi }),
   endpoints: (builder) => ({
     fetchNews: builder.query({
-      query: (page = 0) =>
-        `https://newsapi.org/v2/top-headlines?country=us&page=${page}&pageSize=10&category=business&apiKey=bf5501913fdc445884bc6eca512af789`,
+      query: (filter) => {
+        const { page, query } = filter;
+        console.log("query", query);
+        const queryParams = {
+          country: "us",
+          page: page || 0,
+          pageSize: 10,
+          category: "business",
+          apiKey: "bf5501913fdc445884bc6eca512af789",
+        };
+        // Add query parameter only if it's not empty
+        if (query?.trim() !== "") {
+          queryParams.q = query;
+        }
+        const queryString = new URLSearchParams(queryParams).toString();
+        return `https://newsapi.org/v2/top-headlines?${queryString}`;
+      },
       transformResponse: (response) => {
         // Normalize news data
         return response.articles.map((obj) => ({
@@ -27,8 +42,21 @@ const api = createApi({
       },
     }),
     fetchNyTimes: builder.query({
-      query: (page = 0) =>
-        `${API_BASE_URLS.nyTimesApi}/search/v2/articlesearch.json?q=new+york+times&page=${page}&api-key=osGH0dn73I1UxhaMB74gR13KEEePOsNK`,
+      query: (filter) => {
+        const { page, query } = filter;
+
+        console.log("query", query);
+        const queryParams = {
+          page: page || 0,
+          "api-key": "osGH0dn73I1UxhaMB74gR13KEEePOsNK",
+        };
+        // Construct the query string only if query is not empty
+        if (query?.trim() !== "") {
+          queryParams.q = query;
+        }
+        const queryString = new URLSearchParams(queryParams).toString();
+        return `${API_BASE_URLS.nyTimesApi}/search/v2/articlesearch.json?${queryString}`;
+      },
       baseQuery: fetchBaseQuery({ baseUrl: API_BASE_URLS.nyTimesApi }),
       transformResponse: (response) => {
         // Normalize NY Times data

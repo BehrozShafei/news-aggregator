@@ -13,6 +13,8 @@ import Main from "../component/Main";
 import Sidebar from "../component/Sidebar";
 import Footer from "../component/Footer";
 import HomeNews from "./HomeNews";
+import { Stack } from "@mui/system";
+import { Pagination } from "@mui/material";
 
 const sections = [
   { title: "Technology", url: "#" },
@@ -94,7 +96,7 @@ export default function Blog() {
         <main>
           <MainFeaturedPost post={mainFeaturedPost} />
           <HomeNews />
-          <Grid container spacing={5} sx={{ mt: 3 }} fullWidth>
+          <Grid container spacing={5} sx={{ mt: 3 }}>
             <Main title="From the firehose" posts={posts} />
           </Grid>
         </main>

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Button, Collapse, Grid } from "@mui/material";
-import FeaturedPost from "../component/FeaturedPost"; // Import FeaturedPost component here
+import FeaturedPost from "./../component/FeaturedPost"; // Import FeaturedPost component here
 import { Container, Stack } from "@mui/system";
 
 const CustomCollapseNews = ({ allData = [] }) => {

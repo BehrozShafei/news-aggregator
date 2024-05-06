@@ -10,6 +10,7 @@ function App() {
       <div className="main">
         <Routes>
           <Route path="/" element={<Blog />} />
+          <Route path="/:id" element={<Blog />} />
           <Route path="post" element={<HomeNews />} />
         </Routes>
       </div>

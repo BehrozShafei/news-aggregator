@@ -1,28 +1,31 @@
 import React, { useEffect, useState } from "react";
 import FeaturedPost from "../component/FeaturedPost";
-import { Grid } from "@mui/material";
+import { Grid, Pagination } from "@mui/material";
 import { Stack } from "@mui/system";
-import { Pagination } from "@mui/material";
 
 import { useFetchNewsQuery, useFetchNyTimesQuery } from "../services/apiSlice";
 import CustomCollapseNews from "./CustomCollapseNews";
+import { useLocation, useNavigate } from "react-router-dom";
 
 function HomeNews() {
-  const [page, setPage] = useState(1);
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const navigate = useNavigate();
+  // Accessing query parameters
+  const query = searchParams.get("query") || "";
+  const page = searchParams.get("page") || 0;
   // Fetch data from all three endpoints
   const {
     data: newsData = [],
     isLoading: isLoadingNews,
     isError: isErrorNews,
-  } = useFetchNewsQuery(page);
+  } = useFetchNewsQuery({ page, query });
   const {
     data: nyTimesData = [],
     isLoading: isLoadingNyTimes,
     isError: isErrorNyTimes,
-  } = useFetchNyTimesQuery(page);
-  const handleChange = (event, value) => {
-    setPage(value);
-  };
+  } = useFetchNyTimesQuery({ page, query });
+
   //   const {
   //     data: guardianData,
   //     isLoading: isLoadingGuardian,
@@ -42,6 +45,14 @@ function HomeNews() {
     return <div>Error fetching data...</div>;
   }
   console.log("allData", allData);
+  const handleChange = (event, value) => {
+    const params = new URLSearchParams(location.search);
+    params.set("page", value);
+    const queryString = params.toString();
+    console.log(queryString);
+    navigate(`/?${queryString}`);
+  };
+  const handleSearch = () => {};
   // Render the combined data
   return (
     <div>

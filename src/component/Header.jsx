@@ -10,8 +10,14 @@ import { styled, alpha } from "@mui/material/styles";
 import InputBase from "@mui/material/InputBase";
 import AlertDialog from "./Modal";
 import FilterPage from "./Filter";
+import { useLocation, useNavigate } from "react-router-dom";
+import { Avatar } from "@mui/material";
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
+  display: "flex",
+  boxShadow:
+    "0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12)",
+  margin: "8px",
   borderRadius: theme.shape.borderRadius,
   backgroundColor: alpha(theme.palette.common.white, 0.15),
 
@@ -49,16 +55,26 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 
 function Header(props) {
   const { sections, title } = props;
-
+  const location = useLocation();
+  const [searchTerm, setSearchTerm] = React.useState("");
+  let navigate = useNavigate();
+  const handleSearch = () => {
+    if (searchTerm.trim() !== "") {
+      const params = new URLSearchParams(location.search);
+      params.set("query", searchTerm);
+      const queryString = params.toString();
+      console.log(queryString);
+      navigate(`/?${queryString}`);
+    }
+  };
   return (
     <React.Fragment>
       <Toolbar sx={{ borderBottom: 1, borderColor: "divider" }}>
-        <Button size="small">Subscribe</Button>
         <Typography
-          component="h2"
-          variant="h5"
+          component="h3"
+          variant="h4"
           color="inherit"
-          align="center"
+          align="start"
           noWrap
           sx={{ flex: 1 }}
         >
@@ -66,19 +82,21 @@ function Header(props) {
         </Typography>
 
         <Search>
-          <SearchIconWrapper>
+          <IconButton onClick={handleSearch} aria-label="search">
             <SearchIcon />
-          </SearchIconWrapper>
+          </IconButton>
           <StyledInputBase
+            type="text"
             placeholder="Search…"
             inputProps={{ "aria-label": "search" }}
+            onChange={(e) => setSearchTerm(e.target.value)}
           />
         </Search>
-        <AlertDialog />
+        {/* <AlertDialog /> */}
         <FilterPage />
-        <Button variant="outlined" size="small">
-          Sign up
-        </Button>
+        <Link noWrap variant="body2" href={"/my-feed"}>
+          <Avatar sx={{ m: 1 }} src="/broken-image.jpg" />
+        </Link>
       </Toolbar>
       <Toolbar
         component="nav"
