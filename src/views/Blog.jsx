@@ -12,7 +12,7 @@ import FeaturedPost from "../component/FeaturedPost";
 import Main from "../component/Main";
 import Sidebar from "../component/Sidebar";
 import Footer from "../component/Footer";
-import NewsPage from "./NewsPage";
+import HomeNews from "./HomeNews";
 
 const sections = [
   { title: "Technology", url: "#" },
@@ -93,8 +93,8 @@ export default function Blog() {
         <Header title="news aggregator" sections={sections} />
         <main>
           <MainFeaturedPost post={mainFeaturedPost} />
-          <NewsPage />
-          <Grid container spacing={5} sx={{ mt: 3 }}>
+          <HomeNews />
+          <Grid container spacing={5} sx={{ mt: 3 }} fullWidth>
             <Main title="From the firehose" posts={posts} />
           </Grid>
         </main>

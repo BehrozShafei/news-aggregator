@@ -4,13 +4,11 @@ import { Grid } from "@mui/material";
 import { Stack } from "@mui/system";
 import { Pagination } from "@mui/material";
 
-import {
-  useFetchNewsQuery,
-  useFetchNyTimesQuery,
-} from "./../services/apiSlice";
+import { useFetchNewsQuery, useFetchNyTimesQuery } from "../services/apiSlice";
+import CustomCollapseNews from "./CustomCollapseNews";
 
-function NewsPage() {
-  const [page, setPage] = useState(0);
+function HomeNews() {
+  const [page, setPage] = useState(1);
   // Fetch data from all three endpoints
   const {
     data: newsData = [],
@@ -49,12 +47,9 @@ function NewsPage() {
     <div>
       <main>
         <Grid container spacing={4}>
-          {allData &&
-            allData.map((post) => (
-              <FeaturedPost key={Math.random()} post={post} />
-            ))}
+          {allData && <CustomCollapseNews allData={allData} />}
         </Grid>
-        <Stack spacing={2}>
+        <Stack alignItems="center" sx={{ margin: 0 }}>
           <Pagination count={10} color="primary" onChange={handleChange} />
         </Stack>
       </main>
@@ -62,4 +57,4 @@ function NewsPage() {
   );
 }
 
-export default NewsPage;
+export default HomeNews;

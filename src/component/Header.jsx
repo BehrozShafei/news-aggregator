@@ -8,6 +8,8 @@ import Link from "@mui/material/Link";
 import SearchIcon from "@mui/icons-material/Search";
 import { styled, alpha } from "@mui/material/styles";
 import InputBase from "@mui/material/InputBase";
+import AlertDialog from "./Modal";
+import FilterPage from "./Filter";
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
   borderRadius: theme.shape.borderRadius,
@@ -72,6 +74,8 @@ function Header(props) {
             inputProps={{ "aria-label": "search" }}
           />
         </Search>
+        <AlertDialog />
+        <FilterPage />
         <Button variant="outlined" size="small">
           Sign up
         </Button>
