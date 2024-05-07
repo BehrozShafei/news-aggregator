@@ -8,23 +8,51 @@ import CustomCollapseNews from "./CustomCollapseNews";
 import { useLocation, useNavigate } from "react-router-dom";
 
 function HomeNews() {
+  const [isLoading, setIsLoading] = useState(true);
+  const [isError, setIsError] = useState(false);
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const navigate = useNavigate();
   // Accessing query parameters
   const query = searchParams.get("query") || "";
   const page = searchParams.get("page") || 0;
+  const source = searchParams.get("source") || "all";
   // Fetch data from all three endpoints
-  const {
-    data: newsData = [],
-    isLoading: isLoadingNews,
-    isError: isErrorNews,
-  } = useFetchNewsQuery({ page, query });
-  const {
-    data: nyTimesData = [],
-    isLoading: isLoadingNyTimes,
-    isError: isErrorNyTimes,
-  } = useFetchNyTimesQuery({ page, query });
+  const [data, setData] = useState([]);
+  // Fetch data based on source
+  let fetchDataQueries = [];
+  if (!source || source === "all") {
+    fetchDataQueries = [useFetchNewsQuery({ page, query }), useFetchNyTimesQuery({ page, query })];
+  } else {
+    if (source.includes("newsApi")) {
+      fetchDataQueries.push(useFetchNewsQuery({ page, query }));
+    }
+    if (source.includes("nyTimesApi")) {
+      fetchDataQueries.push(useFetchNyTimesQuery({ page, query }));
+    }
+  }
+  useEffect(() => {
+    const fetchData = () => {
+      try {
+        const fetchedData = fetchDataQueries.map(query => query.data);
+        const combinedData = fetchedData.flat();
+        setData(combinedData);
+        setIsLoading(false);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+        setIsError(true);
+      }
+    };
+
+    fetchData();
+  }, [fetchDataQueries]);
+
+  // const sourceQueryMap = {
+  //   newsApi: useFetchNewsQuery,
+  //   nyTimesApi: useFetchNyTimesQuery,
+  //   // Add more sources as needed
+  // };
+
 
   //   const {
   //     data: guardianData,
@@ -34,17 +62,15 @@ function HomeNews() {
 
   // Combine data from all endpoints
 
-  const allData = [...newsData, ...nyTimesData];
 
   // Handle loading and error states
-  if (isLoadingNews || isLoadingNyTimes) {
+  if (isLoading) {
     return <div>Loading...</div>;
   }
 
-  if (isErrorNews || isErrorNyTimes) {
+  if (isError) {
     return <div>Error fetching data...</div>;
   }
-  console.log("allData", allData);
   const handleChange = (event, value) => {
     const params = new URLSearchParams(location.search);
     params.set("page", value);
@@ -52,13 +78,13 @@ function HomeNews() {
     console.log(queryString);
     navigate(`/?${queryString}`);
   };
-  const handleSearch = () => {};
+  const handleSearch = () => { };
   // Render the combined data
   return (
     <div>
       <main>
         <Grid container spacing={4}>
-          {allData && <CustomCollapseNews allData={allData} />}
+          <CustomCollapseNews allData={data} />
         </Grid>
         <Stack alignItems="center" sx={{ margin: 0 }}>
           <Pagination count={10} color="primary" onChange={handleChange} />

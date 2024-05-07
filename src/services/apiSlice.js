@@ -37,7 +37,7 @@ const api = createApi({
           image: obj.urlToImage,
           imageLabel: "Image Text",
           author: obj.author ? `Author: ${obj.author}` : "No Author",
-          source: "From object 1",
+          avatar: "NewsAPI.svg",
         }));
       },
     }),
@@ -72,7 +72,7 @@ const api = createApi({
             obj.byline && obj.byline.person.length > 0
               ? `Author: ${obj.byline.person[0].firstname} ${obj.byline.person[0].lastname}`
               : "No Author",
-          source: "From object 3",
+          avatar: "NewYorkTimes.svg",
           imageLabel: "Image Text",
         }));
       },
