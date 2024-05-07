@@ -6,29 +6,23 @@ import DialogContent from "@mui/material/DialogContent";
 import dayjs, { Dayjs } from "dayjs";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
+import Divider from "@mui/material/Divider";
+import Autocomplete from "@mui/material/Autocomplete";
+import TextField from "@mui/material/TextField";
+import Select from "@mui/material/Select";
+import MenuItem from "@mui/material/MenuItem";
+import Box from "@mui/material/Box";
+
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { useState } from "react";
-import {
-  Box,
-  Divider,
-  Autocomplete,
-  Select,
-  MenuItem,
-  Grid,
-  IconButton,
-  TextField,
-  Typography,
-} from "@mui/material";
-import ClearIcon from "@mui/icons-material/Clear";
-import AddBoxIcon from "@mui/icons-material/AddBox";
 import { arrHeadlineNews } from "./data";
 import { LocalizationProvider } from "@mui/x-date-pickers";
-export default function FilterPage() {
+
+export default function FilterPage({ filterData }) {
   const [open, setOpen] = useState(false);
   const [headlineNews, setHeadlineNews] = useState(arrHeadlineNews);
   const [areeshow, setAreeshow] = useState([]);
-  const [valueInput, setValueInput] = useState("search");
   const [selectedDate, setSelectedDate] = useState(dayjs("2022-04-17"));
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedSource, setSelectedSource] = useState("");
@@ -48,6 +42,7 @@ export default function FilterPage() {
       )
     );
   };
+
   const handleFilter = () => {
     // Pass the selected filters to the parent component for filtering
     filterData({
@@ -56,6 +51,7 @@ export default function FilterPage() {
       source: selectedSource,
     });
   };
+
   const updateAreeshow = (id) => {
     if (areeshow.some((item) => item.id === id)) {
       setAreeshow((prevAreeshow) =>
@@ -77,68 +73,65 @@ export default function FilterPage() {
   return (
     <React.Fragment>
       <Button variant="outlined" onClick={handleClickOpen}>
-        filter
+        Filter
       </Button>
       <Dialog
         fullWidth
         maxWidth="md"
-        dir="ltr"
         open={open}
         onClose={handleClose}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
       >
-        <DialogTitle id="alert-dialog-title">Customize</DialogTitle>
-        <DialogTitle id="alert-dialog-title">
-          Choose & manage up to 12 topics for your homepage. They'll also appear
-          under topics you follow.{" "}
-        </DialogTitle>
+        <DialogTitle id="alert-dialog-title">Filter</DialogTitle>
         <Divider />
-        <div>
+        <DialogContent>
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <DatePicker
-              label="Controlled picker"
+              label="Select Date"
               value={selectedDate}
               onChange={(newValue) => setSelectedDate(newValue)}
             />
           </LocalizationProvider>
-          {/* Category Filter */}
-          <Autocomplete
-            id="category"
-            options={[
-              "Business",
-              "History",
-              "Politics",
-              "Sport",
-              "International",
-            ]}
-            value={selectedCategory}
-            onChange={(e, value) => setSelectedCategory(value)}
-            renderInput={(params) => <TextField {...params} label="Category" />}
-          />
-
-          {/* Source Filter */}
-          <Select
-            id="source"
-            value={selectedSource}
-            onChange={(e) => setSelectedSource(e.target.value)}
-            label="Source"
-          >
-            <MenuItem value="">All Sources</MenuItem>
-            <MenuItem value="guardian">Guardian</MenuItem>
-            <MenuItem value="newsapi">NewsAPI</MenuItem>
-            <MenuItem value="nytimes">New York Times</MenuItem>
-          </Select>
-
-          {/* Filter Button */}
-          <Button variant="contained" onClick={handleFilter}>
-            Filter
-          </Button>
-        </div>
+          <Box mt={2}>
+            <Autocomplete
+              id="category"
+              options={[
+                "Business",
+                "History",
+                "Politics",
+                "Sport",
+                "International",
+              ]}
+              value={selectedCategory}
+              onChange={(e, value) => setSelectedCategory(value)}
+              renderInput={(params) => (
+                <TextField {...params} label="Category" fullWidth />
+              )}
+            />
+          </Box>
+          <Box mt={2}>
+            <Select
+              id="source"
+              value={selectedSource}
+              onChange={(e) => setSelectedSource(e.target.value)}
+              displayEmpty
+              fullWidth
+              renderValue={(value) => (value ? value : "Source")}
+            >
+              <MenuItem value="" disabled>
+                Source
+              </MenuItem>
+              <MenuItem value="guardian">Guardian</MenuItem>
+              <MenuItem value="newsapi">NewsAPI</MenuItem>
+              <MenuItem value="nytimes">New York Times</MenuItem>
+            </Select>
+          </Box>
+        </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose}>Disagree</Button>
-          <Button onClick={handleClose} autoFocus>
-            Agree
+          <Button onClick={handleClose}>Cancel</Button>
+          <Button onClick={handleFilter} variant="contained" autoFocus>
+            Apply
           </Button>
         </DialogActions>
       </Dialog>
