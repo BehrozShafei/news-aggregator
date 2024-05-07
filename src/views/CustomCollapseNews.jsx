@@ -5,7 +5,7 @@ import { Container, Stack } from "@mui/system";
 
 const CustomCollapseNews = ({ allData = [] }) => {
   const [expanded, setExpanded] = useState(false);
-  console.log("allData", allData);
+  console.log("allData1", allData);
   const handleExpand = () => {
     setExpanded(!expanded);
   };

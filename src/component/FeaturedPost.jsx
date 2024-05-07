@@ -6,11 +6,13 @@ import Card from "@mui/material/Card";
 import CardActionArea from "@mui/material/CardActionArea";
 import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
+
 import NoImage from "./../assets/No-Image.svg";
-import { Avatar } from "@mui/material";
+import NewsAPIImage from "./../assets/NewsAPI.svg";
+import NyTimesImage from "./../assets/NewYorkTimes.svg";
+
 function FeaturedPost(props) {
   const { post } = props;
-  console.log('post', post)
   return (
     <Grid fullWidth sx={{ m: 2, width: "100%" }}>
       <CardActionArea
@@ -19,6 +21,11 @@ function FeaturedPost(props) {
         sx={{ m: 2, width: "100%" }}
         fullWidth
       >
+        <img
+          alt="My Avatar"
+          src={post?.source == "NewYorkTimes" ? NyTimesImage : NewsAPIImage}
+          style={{ maxWidth: 80 }}
+        />
         <Card sx={{ display: "flex" }}>
           <CardContent sx={{ flex: 1 }}>
             <Typography component="h2" variant="h5">
@@ -34,7 +41,6 @@ function FeaturedPost(props) {
               Continue reading...
             </Typography>
           </CardContent>
-          <Avatar src={`../assets/NewYorkTimes.svg`} alt="Avatar" />
           <CardMedia
             component="img"
             sx={{ width: 160, display: { xs: "none", sm: "block" } }}

@@ -13,7 +13,6 @@ const api = createApi({
     fetchNews: builder.query({
       query: (filter) => {
         const { page, query } = filter;
-        console.log("query", query);
         const queryParams = {
           country: "us",
           page: page || 0,
@@ -37,7 +36,7 @@ const api = createApi({
           image: obj.urlToImage,
           imageLabel: "Image Text",
           author: obj.author ? `Author: ${obj.author}` : "No Author",
-          avatar: "NewsAPI.svg",
+          source: "NewsAPI",
         }));
       },
     }),
@@ -45,7 +44,6 @@ const api = createApi({
       query: (filter) => {
         const { page, query } = filter;
 
-        console.log("query", query);
         const queryParams = {
           page: page || 0,
           "api-key": "osGH0dn73I1UxhaMB74gR13KEEePOsNK",
@@ -72,7 +70,7 @@ const api = createApi({
             obj.byline && obj.byline.person.length > 0
               ? `Author: ${obj.byline.person[0].firstname} ${obj.byline.person[0].lastname}`
               : "No Author",
-          avatar: "NewYorkTimes.svg",
+          source: "NewYorkTimes",
           imageLabel: "Image Text",
         }));
       },

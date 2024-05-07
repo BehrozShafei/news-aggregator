@@ -63,7 +63,6 @@ function Header(props) {
       const params = new URLSearchParams(location.search);
       params.set("query", searchTerm);
       const queryString = params.toString();
-      console.log(queryString);
       navigate(`/?${queryString}`);
     }
   };

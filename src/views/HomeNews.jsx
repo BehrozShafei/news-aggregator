@@ -20,9 +20,13 @@ function HomeNews() {
   // Fetch data from all three endpoints
   const [data, setData] = useState([]);
   // Fetch data based on source
+
   let fetchDataQueries = [];
   if (!source || source === "all") {
-    fetchDataQueries = [useFetchNewsQuery({ page, query }), useFetchNyTimesQuery({ page, query })];
+    fetchDataQueries = [
+      useFetchNewsQuery({ page, query }),
+      useFetchNyTimesQuery({ page, query }),
+    ];
   } else {
     if (source.includes("newsApi")) {
       fetchDataQueries.push(useFetchNewsQuery({ page, query }));
@@ -31,10 +35,11 @@ function HomeNews() {
       fetchDataQueries.push(useFetchNyTimesQuery({ page, query }));
     }
   }
+  console.log("fetchDataQueries", fetchDataQueries);
   useEffect(() => {
     const fetchData = () => {
       try {
-        const fetchedData = fetchDataQueries.map(query => query.data);
+        const fetchedData = fetchDataQueries.map((query) => query.data);
         const combinedData = fetchedData.flat();
         setData(combinedData);
         setIsLoading(false);
@@ -45,14 +50,13 @@ function HomeNews() {
     };
 
     fetchData();
-  }, [fetchDataQueries]);
+  }, []);
 
   // const sourceQueryMap = {
   //   newsApi: useFetchNewsQuery,
   //   nyTimesApi: useFetchNyTimesQuery,
   //   // Add more sources as needed
   // };
-
 
   //   const {
   //     data: guardianData,
@@ -61,7 +65,6 @@ function HomeNews() {
   //   } = useFetchGuardianQuey();
 
   // Combine data from all endpoints
-
 
   // Handle loading and error states
   if (isLoading) {
@@ -78,7 +81,7 @@ function HomeNews() {
     console.log(queryString);
     navigate(`/?${queryString}`);
   };
-  const handleSearch = () => { };
+  const handleSearch = () => {};
   // Render the combined data
   return (
     <div>
