@@ -6,6 +6,8 @@ import { Stack } from "@mui/system";
 import { useFetchNewsQuery, useFetchNyTimesQuery } from "../services/apiSlice";
 import CustomCollapseNews from "./CustomCollapseNews";
 import { useLocation, useNavigate } from "react-router-dom";
+import { config } from "../services/constValues";
+import { getData } from "../services/apiSliceRefactor";
 
 function HomeNews() {
   const [isLoading, setIsLoading] = useState(true);
@@ -19,38 +21,86 @@ function HomeNews() {
   const source = searchParams.get("source") || "all";
   // Fetch data from all three endpoints
   const [data, setData] = useState([]);
+
   // Fetch data based on source
+  const sourceNews = [
+    {
+      name: "newsApi",
+      baseUrl: "https://newsapi.org/v2/top-headlines",
+      params: {
+        country: "us",
+        page: page || 1,
+        pageSize: config.newsApi.pageSize,
+        category: "business",
+        apiKey: config.newsApi.apiKey,
+      },
+      responseJson: "articles",
 
-  let fetchDataQueries = [];
-  if (!source || source === "all") {
-    fetchDataQueries = [
-      useFetchNewsQuery({ page, query }),
-      useFetchNyTimesQuery({ page, query }),
-    ];
-  } else {
-    if (source.includes("newsApi")) {
-      fetchDataQueries.push(useFetchNewsQuery({ page, query }));
-    }
-    if (source.includes("nyTimesApi")) {
-      fetchDataQueries.push(useFetchNyTimesQuery({ page, query }));
-    }
-  }
-  console.log("fetchDataQueries", fetchDataQueries);
-  useEffect(() => {
-    const fetchData = () => {
-      try {
-        const fetchedData = fetchDataQueries.map((query) => query.data);
-        const combinedData = fetchedData.flat();
-        setData(combinedData);
-        setIsLoading(false);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-        setIsError(true);
+      schemaOutput: {
+        title: "title",
+        date: "publishedAt",
+        description: "description",
+        image: (news) => {
+          return news.urlToImage || ""
+        },
+        imageLabel: "Image Text",
+        // author: author ? `Author: ${author}` : "No Author",
+        source: "NewsAPI",
+        author: (Author) => {
+          return Author.author ? `Author: ${Author.author}` : "No Author"
+        }
       }
-    };
 
+    },
+    {
+      name: "NewYorkTimes",
+      baseUrl: "https://api.nytimes.com/svc/search/v2/articlesearch.json",
+      params: {
+        "api-key": config.newYorkTimesApi.apiKey,
+        page: page || 0,
+      },
+      responseJson: "response.docs",
+      schemaOutput: {
+        title: "headline.main",
+        date: "pub_date",
+        description: "abstract",
+        image: (news) => {
+          return news.multimedia.length > 0 ? "https://nytimes.com/" + news.multimedia[0].url
+            : ""
+        },
+        // multimedia.length > 0
+        //   ? "https://nytimes.com/" + multimedia[0].url
+        //   : "",
+
+        // author:
+        //   byline && byline.person.length > 0
+        //     ? `Author: ${byline.person[0].firstname} ${byline.person[0].lastname}`
+        //     : "No Author",
+        author: (Author) => {
+          return Author.byline && Author.byline.person.length > 0
+            ? `Author: ${Author.byline.person[0].firstname} ${Author.byline.person[0].lastname}`
+            : "No Author"
+        },
+        source: "NewYorkTimes",
+        imageLabel: "Image Text",
+      }
+    },
+  ]
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const { result, flagError } = await getData(sourceNews, page);
+      console.log('result,flagError', result, flagError)
+      if (flagError) {
+        setIsError(true)
+      } else {
+        setData(result)
+        setIsLoading(false)
+      }
+      // Handle the result here
+    };
     fetchData();
-  }, []);
+  }, [page]);
 
   // const sourceQueryMap = {
   //   newsApi: useFetchNewsQuery,
@@ -81,7 +131,7 @@ function HomeNews() {
     console.log(queryString);
     navigate(`/?${queryString}`);
   };
-  const handleSearch = () => {};
+  const handleSearch = () => { };
   // Render the combined data
   return (
     <div>
@@ -90,7 +140,7 @@ function HomeNews() {
           <CustomCollapseNews allData={data} />
         </Grid>
         <Stack alignItems="center" sx={{ margin: 0 }}>
-          <Pagination count={10} color="primary" onChange={handleChange} />
+          <Pagination count={10} defaultValue={page} color="primary" onChange={handleChange} />
         </Stack>
       </main>
     </div>
@@ -98,3 +148,8 @@ function HomeNews() {
 }
 
 export default HomeNews;
+
+
+
+
+
