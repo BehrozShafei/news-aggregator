@@ -44,57 +44,65 @@
 import axios from "axios";
 
 function getNestedValue(obj, keyString) {
-    // Split the keyString into individual keys
-    const keys = keyString.split('.');
+  // Split the keyString into individual keys
+  const keys = keyString.split(".");
 
-    // Start with the original object
-    let value = obj;
+  // Start with the original object
+  let value = obj;
 
-    // Traverse through each key
-    for (const key of keys) {
-        // Access the nested property
-        if (value && typeof value === 'object' && key in value) {
-            value = value[key];
-        } else {
-            // Return undefined if any intermediate property is missing
-            return undefined;
-        }
+  // Traverse through each key
+  for (const key of keys) {
+    // Access the nested property
+    if (value && typeof value === "object" && key in value) {
+      value = value[key];
+    } else {
+      // Return undefined if any intermediate property is missing
+      return undefined;
     }
+  }
 
-    return value;
+  return value;
 }
 
+export const getData = async (sourceNews, page, query) => {
+  let result = [];
+  let flagError = false;
+  // Define a function to fetch data from a single source
+  const fetchData = async ({
+    baseUrl,
+    params,
+    responseJson,
+    schemaOutput,
+    name,
+  }) => {
+    const queryString = new URLSearchParams({
+      ...params,
+      page,
+      q: query,
+    }).toString();
+    const url = `${baseUrl}?${queryString}`;
+    try {
+      const response = await axios.get(url);
+      const newList = getNestedValue(response.data, responseJson);
+      const data = newList.map((obj) => ({
+        title: getNestedValue(obj, schemaOutput.title),
+        date: obj[schemaOutput.date],
+        description: obj[schemaOutput.description],
+        image: schemaOutput.image(obj),
+        imageLabel: schemaOutput.imageLabel,
+        author: schemaOutput.author(obj),
+        source: name,
+      }));
+      result.push(...data);
+    } catch (error) {
+      console.error(`Error fetching data from ${baseUrl}:`, error);
+      flagError = true;
+    }
+  };
 
-export const getData = async (sourceNews, page) => {
-    let result = [];
-    let flagError = false
-    // Define a function to fetch data from a single source
-    const fetchData = async ({ baseUrl, params, responseJson, schemaOutput, name }) => {
+  // Fetch data from each source in parallel
+  debugger;
+  await Promise.all(sourceNews.map(fetchData));
 
-        const queryString = new URLSearchParams({ ...params, page }).toString();
-        const url = `${baseUrl}?${queryString}`;
-        try {
-            const response = await axios.get(url);
-            const newList = getNestedValue(response.data, responseJson);
-            const data = newList.map((obj) => ({
-                title: getNestedValue(obj, schemaOutput.title),
-                date: obj[schemaOutput.date],
-                description: obj[schemaOutput.description],
-                image: schemaOutput.image(obj),
-                imageLabel: schemaOutput.imageLabel,
-                author: schemaOutput.author(obj),
-                source: name,
-            }));
-            result.push(...data);
-        } catch (error) {
-            console.error(`Error fetching data from ${baseUrl}:`, error);
-            flagError = true
-        }
-    };
-
-    // Fetch data from each source in parallel
-    debugger
-    await Promise.all(sourceNews.map(fetchData));
-
-    return { result, flagError };
+  return { result, flagError };
 };

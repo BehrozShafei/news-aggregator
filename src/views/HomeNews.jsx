@@ -19,11 +19,13 @@ function HomeNews() {
   const query = searchParams.get("query") || "";
   const page = searchParams.get("page") || 0;
   const source = searchParams.get("source") || "all";
+  const begin_date = searchParams.get("begin_date") || "all";
+  const end_date = searchParams.get("end_date") || "all";
   // Fetch data from all three endpoints
   const [data, setData] = useState([]);
 
   // Fetch data based on source
-  const sourceNews = [
+  let sourceNews = [
     {
       name: "newsApi",
       baseUrl: "https://newsapi.org/v2/top-headlines",
@@ -41,16 +43,15 @@ function HomeNews() {
         date: "publishedAt",
         description: "description",
         image: (news) => {
-          return news.urlToImage || ""
+          return news.urlToImage || "";
         },
         imageLabel: "Image Text",
         // author: author ? `Author: ${author}` : "No Author",
         source: "NewsAPI",
         author: (Author) => {
-          return Author.author ? `Author: ${Author.author}` : "No Author"
-        }
-      }
-
+          return Author.author ? `Author: ${Author.author}` : "No Author";
+        },
+      },
     },
     {
       name: "NewYorkTimes",
@@ -65,8 +66,9 @@ function HomeNews() {
         date: "pub_date",
         description: "abstract",
         image: (news) => {
-          return news.multimedia.length > 0 ? "https://nytimes.com/" + news.multimedia[0].url
-            : ""
+          return news.multimedia.length > 0
+            ? "https://nytimes.com/" + news.multimedia[0].url
+            : "";
         },
         // multimedia.length > 0
         //   ? "https://nytimes.com/" + multimedia[0].url
@@ -79,28 +81,28 @@ function HomeNews() {
         author: (Author) => {
           return Author.byline && Author.byline.person.length > 0
             ? `Author: ${Author.byline.person[0].firstname} ${Author.byline.person[0].lastname}`
-            : "No Author"
+            : "No Author";
         },
         source: "NewYorkTimes",
         imageLabel: "Image Text",
-      }
+      },
     },
-  ]
+  ];
 
   useEffect(() => {
     const fetchData = async () => {
-      const { result, flagError } = await getData(sourceNews, page);
-      console.log('result,flagError', result, flagError)
+      const { result, flagError } = await getData(sourceNews, page, query);
+      console.log("result,flagError", result, flagError);
       if (flagError) {
-        setIsError(true)
+        setIsError(true);
       } else {
-        setData(result)
-        setIsLoading(false)
+        setData(result);
+        setIsLoading(false);
       }
       // Handle the result here
     };
     fetchData();
-  }, [page]);
+  }, [page, query]);
 
   // const sourceQueryMap = {
   //   newsApi: useFetchNewsQuery,
@@ -131,7 +133,7 @@ function HomeNews() {
     console.log(queryString);
     navigate(`/?${queryString}`);
   };
-  const handleSearch = () => { };
+  const handleSearch = () => {};
   // Render the combined data
   return (
     <div>
@@ -140,7 +142,12 @@ function HomeNews() {
           <CustomCollapseNews allData={data} />
         </Grid>
         <Stack alignItems="center" sx={{ margin: 0 }}>
-          <Pagination count={10} defaultValue={page} color="primary" onChange={handleChange} />
+          <Pagination
+            count={10}
+            defaultValue={page}
+            color="primary"
+            onChange={handleChange}
+          />
         </Stack>
       </main>
     </div>
@@ -148,8 +155,3 @@ function HomeNews() {
 }
 
 export default HomeNews;
-
-
-
-
-

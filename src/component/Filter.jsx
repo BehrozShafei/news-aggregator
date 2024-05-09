@@ -23,7 +23,8 @@ export default function FilterPage({ filterData }) {
   const [open, setOpen] = useState(false);
   const [headlineNews, setHeadlineNews] = useState(arrHeadlineNews);
   const [areeshow, setAreeshow] = useState([]);
-  const [selectedDate, setSelectedDate] = useState(dayjs("2022-04-17"));
+  const [startDate, setStartDate] = useState(dayjs("2022-04-17"));
+  const [endDate, setEndDate] = useState(dayjs("2022-04-17"));
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedSource, setSelectedSource] = useState("");
 
@@ -88,28 +89,19 @@ export default function FilterPage({ filterData }) {
         <DialogContent>
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <DatePicker
-              label="Select Date"
-              value={selectedDate}
-              onChange={(newValue) => setSelectedDate(newValue)}
+              label="start Date"
+              value={startDate}
+              onChange={(newValue) => setStartDate(newValue)}
+              sx={{ marginRight: 2 }}
+            />
+            <DatePicker
+              label="end Date"
+              value={endDate}
+              onChange={(newValue) => setEndDate(newValue)}
+              sx={{ marginLeft: 2 }}
             />
           </LocalizationProvider>
-          <Box mt={2}>
-            <Autocomplete
-              id="category"
-              options={[
-                "Business",
-                "History",
-                "Politics",
-                "Sport",
-                "International",
-              ]}
-              value={selectedCategory}
-              onChange={(e, value) => setSelectedCategory(value)}
-              renderInput={(params) => (
-                <TextField {...params} label="Category" fullWidth />
-              )}
-            />
-          </Box>
+
           <Box mt={2}>
             <Select
               id="source"
@@ -122,7 +114,6 @@ export default function FilterPage({ filterData }) {
               <MenuItem value="" disabled>
                 Source
               </MenuItem>
-              <MenuItem value="guardian">Guardian</MenuItem>
               <MenuItem value="newsapi">NewsAPI</MenuItem>
               <MenuItem value="nytimes">New York Times</MenuItem>
             </Select>
