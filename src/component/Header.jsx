@@ -55,6 +55,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 
 function Header(props) {
   const { sections, title } = props;
+  const [activeLink, setActiveLink] = React.useState(null);
   const location = useLocation();
   const [searchTerm, setSearchTerm] = React.useState("");
   let navigate = useNavigate();
@@ -65,6 +66,9 @@ function Header(props) {
       const queryString = params.toString();
       navigate(`/?${queryString}`);
     }
+  };
+  const handleLinkClick = (index) => {
+    setActiveLink(index);
   };
   return (
     <React.Fragment>
@@ -100,16 +104,23 @@ function Header(props) {
       <Toolbar
         component="nav"
         variant="dense"
-        sx={{ justifyContent: "space-between", overflowX: "auto" }}
+        sx={{ justifyContent: 'space-between', overflowX: 'auto' }}
       >
-        {sections.map((section) => (
+        {sections.map((section, index) => (
           <Link
-            color="inherit"
-            noWrap
             key={section.title}
-            variant="body2"
             href={section.url}
-            sx={{ p: 1, flexShrink: 0 }}
+            color={activeLink === index ? 'primary' : 'inherit'}
+            underline="none"
+            sx={{
+              p: 1,
+              flexShrink: 0,
+              cursor: 'pointer',
+              '&:hover': {
+                color: activeLink !== index && 'primary',
+              },
+            }}
+            onClick={() => handleLinkClick(index)}
           >
             {section.title}
           </Link>

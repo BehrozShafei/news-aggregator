@@ -18,8 +18,11 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { useState } from "react";
 import { arrHeadlineNews } from "./data";
 import { LocalizationProvider } from "@mui/x-date-pickers";
+import { useLocation, useNavigate } from "react-router-dom";
 
 export default function FilterPage({ filterData }) {
+  const location = useLocation();
+  const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const [headlineNews, setHeadlineNews] = useState(arrHeadlineNews);
   const [areeshow, setAreeshow] = useState([]);
@@ -45,12 +48,24 @@ export default function FilterPage({ filterData }) {
   };
 
   const handleFilter = () => {
-    // Pass the selected filters to the parent component for filtering
-    filterData({
-      date: selectedDate,
-      category: selectedCategory,
-      source: selectedSource,
-    });
+    const params = new URLSearchParams();
+    setOpen(false);
+    if (startDate) {
+      params.set("begin_date", startDate.format("YYYY-MM-DD"));
+    }
+    if (endDate) {
+      params.set("end_date", endDate.format("YYYY-MM-DD"));
+    }
+
+    // Add source parameter
+    if (selectedSource) {
+      params.set("source", selectedSource);
+    }
+    const queryString = params.toString();
+    console.log(queryString);
+    navigate(`/?${queryString}`);
+
+
   };
 
   const updateAreeshow = (id) => {
