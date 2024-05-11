@@ -18,10 +18,9 @@ function HomeNews() {
   // Accessing query parameters
   const query = searchParams.get("query") || "";
   const page = searchParams.get("page") || 0;
-  const source = searchParams.get("source") || "";
-  const begin_date = searchParams.get("begin_date") || "";
-  const end_date = searchParams.get("end_date") || "";
-  const category = searchParams.get("category") || "";
+  const source = searchParams.get("source") || "all";
+  const begin_date = searchParams.get("begin_date") || "all";
+  const end_date = searchParams.get("end_date") || "all";
   // Fetch data from all three endpoints
   const [data, setData] = useState([]);
 
@@ -34,11 +33,8 @@ function HomeNews() {
         country: "us",
         page: page || 1,
         pageSize: config.newsApi.pageSize,
+        category: "business",
         apiKey: config.newsApi.apiKey,
-        to: end_date,
-        category,
-        from: begin_date
-
       },
       responseJson: "articles",
 
@@ -62,9 +58,6 @@ function HomeNews() {
       baseUrl: "https://api.nytimes.com/svc/search/v2/articlesearch.json",
       params: {
         "api-key": config.newYorkTimesApi.apiKey,
-        category,
-        end_date,
-        begin_date,
         page: page || 0,
       },
       responseJson: "response.docs",
@@ -77,6 +70,14 @@ function HomeNews() {
             ? "https://nytimes.com/" + news.multimedia[0].url
             : "";
         },
+        // multimedia.length > 0
+        //   ? "https://nytimes.com/" + multimedia[0].url
+        //   : "",
+
+        // author:
+        //   byline && byline.person.length > 0
+        //     ? `Author: ${byline.person[0].firstname} ${byline.person[0].lastname}`
+        //     : "No Author",
         author: (Author) => {
           return Author.byline && Author.byline.person.length > 0
             ? `Author: ${Author.byline.person[0].firstname} ${Author.byline.person[0].lastname}`
@@ -87,40 +88,10 @@ function HomeNews() {
       },
     },
   ];
-  const deleteEmptyParams = async (sourceNews) => {
-    const removeNullValues = (obj) => {
-      for (const key in obj) {
-        if (obj[key] === "") {
-          delete obj[key];
-        }
-      }
-      return obj;
-    };
-    sourceNews.forEach((item, index) => {
-      return item = { ...item, ...removeNullValues(item.params) }
-    })
 
-
-    return sourceNews
-
-  }
-  const makeFinalSource = async (sourceNews, source) => {
-    if (source === "") {
-      return sourceNews;
-    }
-    const selectedSource = sourceNews.find((obj) => obj.name === source);
-    if (selectedSource) {
-      return [selectedSource];
-    }
-    return sourceNews;
-  };
   useEffect(() => {
     const fetchData = async () => {
-      debugger
-      const pureSourceNews = await deleteEmptyParams(sourceNews)
-      const finalSource = await makeFinalSource(pureSourceNews, source);
-      console.log('f', finalSource)
-      const { result, flagError } = await getData(finalSource, page, query);
+      const { result, flagError } = await getData(sourceNews, page, query);
       console.log("result,flagError", result, flagError);
       if (flagError) {
         setIsError(true);
@@ -131,7 +102,7 @@ function HomeNews() {
       // Handle the result here
     };
     fetchData();
-  }, [page, query, category, source]);
+  }, [page, query]);
 
   // const sourceQueryMap = {
   //   newsApi: useFetchNewsQuery,
@@ -162,7 +133,7 @@ function HomeNews() {
     console.log(queryString);
     navigate(`/?${queryString}`);
   };
-  const handleSearch = () => { };
+  const handleSearch = () => {};
   // Render the combined data
   return (
     <div>

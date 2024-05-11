@@ -26,8 +26,8 @@ export default function FilterPage({ filterData }) {
   const [open, setOpen] = useState(false);
   const [headlineNews, setHeadlineNews] = useState(arrHeadlineNews);
   const [areeshow, setAreeshow] = useState([]);
-  const [startDate, setStartDate] = useState(dayjs("2022-04-17"));
-  const [endDate, setEndDate] = useState(dayjs("2022-04-17"));
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedSource, setSelectedSource] = useState("");
 
@@ -64,8 +64,6 @@ export default function FilterPage({ filterData }) {
     const queryString = params.toString();
     console.log(queryString);
     navigate(`/?${queryString}`);
-
-
   };
 
   const updateAreeshow = (id) => {
@@ -129,8 +127,8 @@ export default function FilterPage({ filterData }) {
               <MenuItem value="" disabled>
                 Source
               </MenuItem>
-              <MenuItem value="newsapi">NewsAPI</MenuItem>
-              <MenuItem value="nytimes">New York Times</MenuItem>
+              <MenuItem value="newsApi">NewsAPI</MenuItem>
+              <MenuItem value="NewYorkTimes">New York Times</MenuItem>
             </Select>
           </Box>
         </DialogContent>
