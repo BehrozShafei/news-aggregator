@@ -1,20 +1,31 @@
 import React, { useState } from "react";
-import { Button, Collapse, Grid } from "@mui/material";
+import { Button, Collapse, Grid, Skeleton } from "@mui/material";
 import FeaturedPost from "./../component/FeaturedPost"; // Import FeaturedPost component here
 import { Container, Stack } from "@mui/system";
 
-const CustomCollapseNews = ({ allData = [] }) => {
+const CustomCollapseNews = ({ allData = [], isLoading }) => {
   const [expanded, setExpanded] = useState(false);
-  console.log("allData1", allData);
+  console.log("loader 2", isLoading);
   const handleExpand = () => {
     setExpanded(!expanded);
   };
 
+  if (isLoading) {
+    return (
+      <Grid fullWidth sx={{ m: 2, width: "100%" }}>
+        <Skeleton variant="rectangular" width="100%" sx={{ m: 2 }} height={200} animation="wave" />
+        <Skeleton variant="rectangular" width="100%" sx={{ m: 2 }} height={200} animation="wave" />
+        <Skeleton variant="rectangular" width="100%" sx={{ m: 2 }} height={200} animation="wave" />
+        <Skeleton variant="rectangular" width="100%" sx={{ m: 2 }} height={200} animation="wave" />
+
+      </Grid>
+    );
+  }
   return (
     <>
       {/* Render the first two items without collapse */}
       {allData.slice(0, 4).map((post, index) => (
-        <FeaturedPost key={index} post={post} />
+        <FeaturedPost key={index} post={post} isLoading={isLoading} />
       ))}
 
       {/* Render the rest of the items with collapse */}
@@ -27,7 +38,7 @@ const CustomCollapseNews = ({ allData = [] }) => {
           fullWidth
           sx={{ m: 2, width: "100%" }}
         >
-          <FeaturedPost post={post} />
+          <FeaturedPost post={post} isLoading={isLoading} />
         </Collapse>
       ))}
 
