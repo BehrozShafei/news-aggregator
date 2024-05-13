@@ -1,24 +1,42 @@
-import { useState } from "react";
-import "./App.css";
-import Blog from "./views/Blog";
-import "./App.css";
-import { Routes, Route, Link } from "react-router-dom";
-import HomeNews from "./views/HomeNews";
-import MyFeed from "./views/MyFeed";
-function App() {
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Blog from './views/Blog';
+import MyFeed from './views/MyFeed';
+import LandingPageLayout from './layouts/LandingPageLayout';
+import MyFeedLayout from './layouts/MyFeedLayout';
+
+const App = () => {
   return (
-    <div className="App">
-      <div className="main">
-        <Routes>
-          <Route path="/" element={<Blog />} />
-          <Route path="/:id" element={<Blog />} />
-          <Route path="/my-feed" element={<MyFeed />} />
-          <Route path="/my-feed:id" element={<MyFeed />} />
-          <Route path="post" element={<HomeNews />} />
-        </Routes>
-      </div>
-    </div>
+    <Router>
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <LandingPageLayout>
+              <Blog />
+            </LandingPageLayout>
+          }
+        />
+        <Route
+          path="/:id"
+          element={
+            <LandingPageLayout>
+              <Blog />
+            </LandingPageLayout>
+          }
+        />
+        <Route
+          path="/MyFeed"
+          element={
+            <MyFeedLayout>
+              <Route path="/MyFeed" element={<MyFeed />} />
+              <Route path="/MyFeed/:id" element={<MyFeed />} />
+            </MyFeedLayout>
+          }
+        />
+      </Routes>
+    </Router>
   );
-}
+};
 
 export default App;

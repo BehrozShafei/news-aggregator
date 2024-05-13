@@ -9,6 +9,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import { styled, alpha } from "@mui/material/styles";
 import InputBase from "@mui/material/InputBase";
 import AlertDialog from "./Modal";
+import HomeIcon from '@mui/icons-material/Home';
 import FilterPage from "./Filter";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Avatar } from "@mui/material";
@@ -52,10 +53,10 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
     },
   },
 }));
-
 function Header(props) {
   const { sections, title } = props;
   const [activeLink, setActiveLink] = React.useState(null);
+  const [isHomePage, setIsHomePage] = React.useState(true);
   const location = useLocation();
   const [searchTerm, setSearchTerm] = React.useState("");
   let navigate = useNavigate();
@@ -70,6 +71,7 @@ function Header(props) {
   const handleLinkClick = (index) => {
     setActiveLink(index);
   };
+  console.log('isHomePage', isHomePage)
   return (
     <React.Fragment>
       <Toolbar sx={{ borderBottom: 1, borderColor: "divider" }}>
@@ -97,9 +99,19 @@ function Header(props) {
         </Search>
         {/* <AlertDialog /> */}
         <FilterPage />
-        <Link noWrap variant="body2" href={"/my-feed"}>
-          <Avatar sx={{ m: 1 }} src="/broken-image.jpg" />
+        {isHomePage ? <Link noWrap variant="body2" >
+          <Avatar sx={{ m: 1 }}
+            onClick={() => {
+              debugger
+              navigate("/my-feed")
+              setIsHomePage(false);
+            }} src="/broken-image.jpg" />
         </Link>
+          : <Link noWrap variant="body2" href={"/"}>
+            <Avatar sx={{ m: 1 }}>
+              <HomeIcon />
+            </Avatar>
+          </Link>}
       </Toolbar>
       <Toolbar
         component="nav"
